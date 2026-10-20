@@ -1,0 +1,30 @@
+{
+    "orders": [
+        {
+            "name": "ID",
+            "type": "int"
+        },
+        {
+            "name": "summ",
+            "type": "int"
+        }
+    ],
+    "products": [
+        {
+            "name": "ID",
+            "type": "int"
+        },
+        {
+            "name": "title",
+            "type": "str"
+        },
+        {
+            "name": "price",
+            "type": "int"
+        },
+        {
+            "name": "is_active",
+            "type": "bool"
+        }
+    ]
+}
