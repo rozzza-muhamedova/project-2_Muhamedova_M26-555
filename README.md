@@ -35,3 +35,9 @@
     <command> help - справочная информация
     
     exit - выход из программы
+
+
+
+ССЫЛКА НА asciinema:
+
+https://asciinema.org/a/Q5Xl07r9wevQvbEH
