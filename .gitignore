@@ -3,3 +3,7 @@ dist/
 __pycache__/
 *.egg-info
 .DS_Store
+.python-version
+db_meta.json
+data/
+*.cast
