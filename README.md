@@ -132,3 +132,4 @@ https://asciinema.org/a/Q5Xl07r9wevQvbEH
 https://asciinema.org/a/9sC9o15kwCwe7alf
 
 4. Декораторы и замыкания
+https://asciinema.org/a/ZtvPCTY7ywCsdnCY
