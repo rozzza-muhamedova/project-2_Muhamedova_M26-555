@@ -26,7 +26,7 @@
     3. Перейдите в папку проекта.
 
     4. Соберите пакет и установите его глобально:
-    
+
     uv build
     uv tool install dist/*.whl --force
 
@@ -133,3 +133,6 @@ https://asciinema.org/a/9sC9o15kwCwe7alf
 
 4. Декораторы и замыкания
 https://asciinema.org/a/ZtvPCTY7ywCsdnCY
+
+5. Итоговая
+https://asciinema.org/a/BSym5R01yrfTWITG
