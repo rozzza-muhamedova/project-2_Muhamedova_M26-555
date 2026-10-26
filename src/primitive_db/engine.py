@@ -3,7 +3,9 @@ import shlex
 import prompt
 from prettytable import PrettyTable
 
+from primitive_db.constants import META_FILE
 from primitive_db.core import create_table, delete, drop_table, insert, select, update
+from primitive_db.decorators import create_cacher
 from primitive_db.parser import is_column_in_table, parse_set, parse_where
 from primitive_db.utils import (
     load_metadata,
@@ -12,7 +14,7 @@ from primitive_db.utils import (
     save_table_data,
 )
 
-META_FILE = "db_meta.json" 
+
 def print_help():
     """Prints the help message for the current mode."""
    
@@ -43,6 +45,7 @@ def run():
     """Главная функция. Содержит основной цикл программы."""
 
     metadata = load_metadata(META_FILE)
+    cache = create_cacher()
 
     print_help()
     while True:
@@ -66,16 +69,21 @@ def run():
             else:
                 table_name = args[1]
                 colomns = args[2:]
-                metadata = create_table(metadata, table_name, colomns)
-                save_metadata(META_FILE, metadata)
+                new_metadata = create_table(metadata, table_name, colomns)
+                if new_metadata is not None:
+                    metadata = new_metadata
+                    save_metadata(META_FILE, metadata)
         elif command == 'drop_table':
             if len(args) != 2:
                 print(f'Некорректное значение: {input_command}. '
                       f'Попробуйте снова.')
             else:
                 table_name = args[1]
-                metadata = drop_table(metadata, table_name)
-                save_metadata(META_FILE, metadata)
+                new_metadata = drop_table(metadata, table_name)
+                if new_metadata is not None:  # <--- ПРОВЕРЯЕМ new_metadata
+                    metadata = new_metadata
+                    save_metadata(META_FILE, metadata)
+                    cache = create_cacher()
                 
         elif command == 'select':
 
@@ -110,7 +118,10 @@ def run():
                     continue
 
             table_data = load_table_data(table_name)
-            result = select(table_data, where_clause)
+            result = select(table_data, where_clause, cache)
+
+            if result is None: 
+                continue
 
             if result == []:
                 print("Записей не найдено.")
@@ -143,7 +154,9 @@ def run():
             table_data = load_table_data(table_name)
             result = insert(metadata, table_data, table_name, values)
 
-            save_table_data(table_name, result)
+            if result is not None:
+                save_table_data(table_name, result)
+                cache = create_cacher()
         
         elif command == 'delete':
             if len(args) < 3:
@@ -179,9 +192,13 @@ def run():
                 continue
 
             table_data = load_table_data(table_name)
-            result = delete(table_name, table_data, where_clause)
+            new_result = delete(table_name, table_data, where_clause)
 
-            save_table_data(table_name, result)
+            if new_result is not None:
+                if len(new_result) != len(table_data):
+                    save_table_data(table_name, new_result)
+                    cache = create_cacher()
+
 
         elif command == 'update':
             if len(args) < 6 or 'set' not in args or 'where' not in args:
@@ -220,7 +237,9 @@ def run():
             table_data = load_table_data(table_name)
             result = update(table_name, table_data, set_clause, where_clause)
 
-            save_table_data(table_name, result)
+            if result is not None:
+                save_table_data(table_name, result)
+                cache = create_cacher()
         
         elif command == 'info':
 
